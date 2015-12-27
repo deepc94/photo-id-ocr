@@ -1,8 +1,8 @@
 """
 Title: Image Preprocessing
 Author: Deep Chakraborty
-Date Created: 26/12/2015
-
+Date First Created: 26/12/2015
+Date Modified: 28/12/2015
 
 The code currently has many redundancies that need to be fixed
 """
@@ -10,18 +10,28 @@ The code currently has many redundancies that need to be fixed
 
 import cv2
 import numpy as np
+import argparse
 from math import atan
 
+# to get the image from command line arguments
+
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required = True, 
+	help = "Path to the image")
+args = vars(ap.parse_args())
+
+
+image = cv2.imread(args["image"])
+
 # Part 1: Extracting only colored regions from the image
-
-image = cv2.imread('image2.jpg')
-
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 blurred = cv2.GaussianBlur(image, (3,3), 0)
 (T, thresh) = cv2.threshold(gray, 254, 255, cv2.THRESH_BINARY_INV)
 
-kernel = np.ones((5,5),np.uint8)
-thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
+kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
+
+# kernel = np.ones((5,5),np.uint8)
+thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations = 5)
 
 (_, cnts, _) = cv2.findContours(thresh, cv2.RETR_EXTERNAL,
        cv2.CHAIN_APPROX_SIMPLE)
@@ -77,7 +87,7 @@ thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
 (x, y, w, h) = cv2.boundingRect(cnts[0])
 cropped = image[y:y+h, x:x+w]
 cv2.imshow("Cropped", cropped)
-cv2.imwrite("image2final.jpg",cropped)
+cv2.imwrite("f_" + args["image"],cropped)
 
 
 cv2.waitKey(0)

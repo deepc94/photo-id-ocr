@@ -9,7 +9,7 @@ First run preprocess.py to get the required ROI as:
 ```
 $ python preprocess.py -i <path-to-image>
 ```
-Then run segment.py to obtain the text regions and face:
+Then run segment.py with argument as the image obtained after running preprocess.py to obtain the text regions and face:
 ```
 $ python segment.py -i <path-to-image>
 ```
